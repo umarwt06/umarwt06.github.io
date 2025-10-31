@@ -253,13 +253,19 @@
                 const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
                 if (shortMatch && shortMatch[1].length === 11) {
                     videoId = shortMatch[1];
+                } else {
+                    // Check for Shorts format: https://www.youtube.com/shorts/VIDEO_ID
+                    const shortsMatch = url.match(/youtube\.com\/shorts\/([^?&]+)/);
+                    if (shortsMatch && shortsMatch[1].length === 11) {
+                        videoId = shortsMatch[1];
+                    }
                 }
             }
 
             if (videoId) {
-                // Use a reliable embed URL format that works even for Shorts
-                // We add rel=0 (no related videos) and autoplay=1 (start immediately)
-                return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&controls=1`;
+                // Crucial fix for Shorts: use a reliable embed URL format that works by forcing the standard player.
+                // We add rel=0 (no related videos), autoplay=1 (start immediately), and loop=1
+                return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&controls=1&modestbranding=1&loop=1&playlist=${videoId}`;
             }
             // If it's not a recognizable YouTube format, return the original URL (e.g., Vimeo)
             return url;
@@ -274,11 +280,11 @@
                 description: 'A cinematic animation of ear buds rendered on blender using the cycles render engine.',
                 technicalDetails: 'Polycount: ~50k triangles per asset (max). Texture resolution: 2k PBR. Optimization: Instancing and LOD groups.',
                 image: 'https://placehold.co/400x600/0d9488/1f2937?text=EarBuds+9:16', // Changed placeholder size for vertical preview
-                ratio: '9/16', // This defines the aspect ratio
+                ratio: '4/5', // This defines the aspect ratio
                 type: 'video',
-                // CORRECTED: Use the standard video ID for the embed URL. 
-                // The video ID from your example 'eZtTOlGjeNM' is correctly placed here.
-                videoUrl: 'https://www.youtube.com/embed/eZtTOlGjeNM?rel=0&autoplay=1&controls=1' 
+                // Updated to use a standard YouTube URL format for the video ID for clarity. 
+                // The getYouTubeEmbedUrl function will handle converting this to the correct embed format.
+                videoUrl: 'https://www.youtube.com/watch?v=eZtTOlGjeNM' 
             },
             {
                 title: 'Sci-Fi Landing Bay (Animation)',
@@ -287,7 +293,7 @@
                 description: 'A 15-second animated sequence focusing on complex camera movements and atmospheric volumetric fog in a sci-fi environment.',
                 technicalDetails: 'Animation: Sequencer in UE5. Rendering: Real-time Path Tracing. Frame Rate: 30 FPS.',
                 image: 'https://placehold.co/600x400/4c0519/ffffff?text=Animation+Preview+(Click+to+Play)',
-                ratio: '16/9',
+                ratio: '4/5',
                 type: 'video',
                 // IMPORTANT: Use a private URL (Vimeo Pro, YouTube Unlisted, etc.) here. 
                 videoUrl: 'https://www.youtube.com/embed/YOUR_VIDEO_ID?rel=0&autoplay=1&controls=1' // Placeholder for 16:9 video
@@ -435,7 +441,7 @@
                     <div class="relative w-full overflow-hidden" style="padding-top: ${paddingPercentage}%;"> 
                         <iframe src="${embedUrl}" 
                             frameborder="0" 
-                            allow="autoplay; encrypted-media" 
+                            allow="autoplay; encrypted-media; gyroscope; picture-in-picture" 
                             allowfullscreen 
                             class="absolute top-0 left-0 w-full h-full"
                             referrerpolicy="no-referrer"></iframe>
