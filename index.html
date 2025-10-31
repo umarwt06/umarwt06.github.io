@@ -237,34 +237,27 @@
 
     <script>
         /**
-         * Converts a standard YouTube URL into an embed URL format, which is more reliable.
-         * Handles watch?v= and youtu.be/ formats.
+         * Converts a standard YouTube URL (watch, youtu.be, shorts) into a robust embed URL.
          * @param {string} url - The video URL provided by the user.
          * @returns {string} - The corrected embed URL or the original URL if it's not YouTube.
          */
         function getYouTubeEmbedUrl(url) {
             let videoId = '';
-            // Check for standard watch format: https://www.youtube.com/watch?v=VIDEO_ID
-            const watchMatch = url.match(/(?:\?v=|\&v=)([^&]+)/);
-            if (watchMatch && watchMatch[1].length === 11) {
-                videoId = watchMatch[1];
-            } else {
-                // Check for shortened/share format: https://youtu.be/VIDEO_ID
-                const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
-                if (shortMatch && shortMatch[1].length === 11) {
-                    videoId = shortMatch[1];
-                } else {
-                    // Check for Shorts format: https://www.youtube.com/shorts/VIDEO_ID
-                    const shortsMatch = url.match(/youtube\.com\/shorts\/([^?&]+)/);
-                    if (shortsMatch && shortsMatch[1].length === 11) {
-                        videoId = shortsMatch[1];
-                    }
-                }
+            // Match watch?v=, &v=, youtu.be/, or youtube.com/shorts/
+            const match = url.match(/(?:\?v=|\&v=)([^&]+)|youtu\.be\/([^?&]+)|youtube\.com\/shorts\/([^?&]+)/);
+
+            if (match) {
+                // Determine which group matched (1 for watch/&v, 2 for youtu.be, 3 for shorts)
+                videoId = match[1] || match[2] || match[3];
             }
 
-            if (videoId) {
-                // Crucial fix for Shorts: use a reliable embed URL format that works by forcing the standard player.
-                // We add rel=0 (no related videos), autoplay=1 (start immediately), and loop=1
+            if (videoId && videoId.length === 11) {
+                // Crucial parameters for reliable embedding:
+                // rel=0: Prevents related videos after playback (more professional)
+                // autoplay=1: Starts playback immediately
+                // controls=1: Shows player controls
+                // modestbranding=1: Uses the smaller YouTube logo
+                // loop=1 & playlist={videoId}: Essential for seamless looping
                 return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&controls=1&modestbranding=1&loop=1&playlist=${videoId}`;
             }
             // If it's not a recognizable YouTube format, return the original URL (e.g., Vimeo)
@@ -280,11 +273,10 @@
                 description: 'A cinematic animation of ear buds rendered on blender using the cycles render engine.',
                 technicalDetails: 'Polycount: ~50k triangles per asset (max). Texture resolution: 2k PBR. Optimization: Instancing and LOD groups.',
                 image: 'https://placehold.co/400x600/0d9488/1f2937?text=EarBuds+9:16', // Changed placeholder size for vertical preview
-                ratio: '4/5', // This defines the aspect ratio
+                ratio: '9/16', // This defines the aspect ratio
                 type: 'video',
-                // Updated to use a standard YouTube URL format for the video ID for clarity. 
-                // The getYouTubeEmbedUrl function will handle converting this to the correct embed format.
-                videoUrl: 'https://www.youtube.com/watch?v=eZtTOlGjeNM' 
+                // ONLY THE VIDEO ID is required here, which is 'eZtTOlGjeNM'
+                videoUrl: 'eZtTOlGjeNM' 
             },
             {
                 title: 'Sci-Fi Landing Bay (Animation)',
@@ -293,10 +285,11 @@
                 description: 'A 15-second animated sequence focusing on complex camera movements and atmospheric volumetric fog in a sci-fi environment.',
                 technicalDetails: 'Animation: Sequencer in UE5. Rendering: Real-time Path Tracing. Frame Rate: 30 FPS.',
                 image: 'https://placehold.co/600x400/4c0519/ffffff?text=Animation+Preview+(Click+to+Play)',
-                ratio: '4/5',
+                ratio: '16/9',
                 type: 'video',
                 // IMPORTANT: Use a private URL (Vimeo Pro, YouTube Unlisted, etc.) here. 
-                videoUrl: 'https://www.youtube.com/embed/YOUR_VIDEO_ID?rel=0&autoplay=1&controls=1' // Placeholder for 16:9 video
+                // For YouTube, just provide the ID, and the function will handle it.
+                videoUrl: 'YOUR_VIDEO_ID' // Placeholder for 16:9 video
             },
             {
                 title: 'Cyberpunk Alley',
@@ -431,7 +424,12 @@
                 
                 let embedUrl = item.videoUrl;
 
-                // Check if the URL needs conversion (e.g., if the user pasted a standard share link)
+                // Check if the URL needs conversion (e.g., if the user pasted a standard share link or just the ID)
+                if (!embedUrl.includes("http")) {
+                    // Assume it's a YouTube ID if it doesn't contain http (like the EarBuds example)
+                    embedUrl = `https://www.youtube.com/watch?v=${embedUrl}`;
+                }
+                
                 if (embedUrl.includes("youtube.com") || embedUrl.includes("youtu.be")) {
                     embedUrl = getYouTubeEmbedUrl(embedUrl);
                 }
