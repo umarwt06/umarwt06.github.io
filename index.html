@@ -44,6 +44,13 @@
             user-select: none;
             -webkit-user-drag: none; /* Prevents image dragging */
         }
+
+        /* --- CUSTOM ASPECT RATIO FOR VERTICAL REEL/SHORT THUMBNAIL --- */
+        /* Used for 9:16 ratio thumbnails in the grid */
+        .aspect-9x16 {
+            /* 16 / 9 = 177.78% padding-top */
+            padding-top: 177.78%; 
+        }
     </style>
     <script>
         tailwind.config = {
@@ -229,6 +236,35 @@
 
 
     <script>
+        /**
+         * Converts a standard YouTube URL into an embed URL format, which is more reliable.
+         * Handles watch?v= and youtu.be/ formats.
+         * @param {string} url - The video URL provided by the user.
+         * @returns {string} - The corrected embed URL or the original URL if it's not YouTube.
+         */
+        function getYouTubeEmbedUrl(url) {
+            let videoId = '';
+            // Check for standard watch format: https://www.youtube.com/watch?v=VIDEO_ID
+            const watchMatch = url.match(/(?:\?v=|\&v=)([^&]+)/);
+            if (watchMatch && watchMatch[1].length === 11) {
+                videoId = watchMatch[1];
+            } else {
+                // Check for shortened/share format: https://youtu.be/VIDEO_ID
+                const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
+                if (shortMatch && shortMatch[1].length === 11) {
+                    videoId = shortMatch[1];
+                }
+            }
+
+            if (videoId) {
+                // Use a reliable embed URL format that works even for Shorts
+                // We add rel=0 (no related videos) and autoplay=1 (start immediately)
+                return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&controls=1`;
+            }
+            // If it's not a recognizable YouTube format, return the original URL (e.g., Vimeo)
+            return url;
+        }
+
         // --- Enhanced Mock Portfolio Data (Updated to include 'type' and 'videoUrl') ---
         const portfolioData = [
             {
@@ -237,22 +273,24 @@
                 software: 'Blender, Capcut',
                 description: 'A cinematic animation of ear buds rendered on blender using the cycles render engine.',
                 technicalDetails: 'Polycount: ~50k triangles per asset (max). Texture resolution: 2k PBR. Optimization: Instancing and LOD groups.',
-                image: 'https://placehold.co/600x400/0d9488/1f2937?text=Castle+Kit+(16:9)',
-                ratio: '9/16',
-                type: 'video'
+                image: 'https://placehold.co/400x600/0d9488/1f2937?text=EarBuds+9:16', // Changed placeholder size for vertical preview
+                ratio: '9/16', // This defines the aspect ratio
+                type: 'video',
+                // CORRECTED: Use the standard video ID for the embed URL. 
+                // The video ID from your example 'eZtTOlGjeNM' is correctly placed here.
+                videoUrl: 'https://www.youtube.com/embed/eZtTOlGjeNM?rel=0&autoplay=1&controls=1' 
             },
             {
-                title: 'EarBuds Animation',
-                category: 'Animation',
-                software: 'Blender, Capcut',
-                description: 'A cinematic animation of ear buds rendered on blender using the cycles render engine.',
+                title: 'Sci-Fi Landing Bay (Animation)',
+                category: 'Cinematic/VFX',
+                software: 'Blender, Unreal Engine 5, After Effects',
+                description: 'A 15-second animated sequence focusing on complex camera movements and atmospheric volumetric fog in a sci-fi environment.',
                 technicalDetails: 'Animation: Sequencer in UE5. Rendering: Real-time Path Tracing. Frame Rate: 30 FPS.',
                 image: 'https://placehold.co/600x400/4c0519/ffffff?text=Animation+Preview+(Click+to+Play)',
-                ratio: '9/16',
+                ratio: '16/9',
                 type: 'video',
                 // IMPORTANT: Use a private URL (Vimeo Pro, YouTube Unlisted, etc.) here. 
-                // This mock URL is for demonstration. Replace 'YOUR_VIDEO_ID' with the actual embed ID.
-                videoUrl: 'https://www.youtube.com/embed/eZtTOlGjeNM?rel=0&autoplay=1&controls=0' 
+                videoUrl: 'https://www.youtube.com/embed/YOUR_VIDEO_ID?rel=0&autoplay=1&controls=1' // Placeholder for 16:9 video
             },
             {
                 title: 'Cyberpunk Alley',
@@ -318,11 +356,19 @@
 
             portfolioData.forEach((item, index) => {
                 // Determine aspect ratio for proper grid display
-                let aspectRatioClass = 'aspect-h-9'; // Default to 16:9
+                // Aspect ratio classes are based on standard Tailwind utilities where available, 
+                // using custom class for 9:16.
+                let aspectRatioClasses = 'aspect-w-16 aspect-h-9'; // Default 16:9
+                
                 if (item.ratio === '1/1') {
-                    aspectRatioClass = 'aspect-h-1';
+                    // Square
+                    aspectRatioClasses = 'aspect-w-1 aspect-h-1'; 
                 } else if (item.ratio === '4/5') {
-                    aspectRatioClass = 'aspect-h-5';
+                    // Vertical photo (4:5)
+                    aspectRatioClasses = 'aspect-w-4 aspect-h-5'; 
+                } else if (item.ratio === '9/16') {
+                    // Reel/Shorts vertical (using custom class defined in <style>)
+                    aspectRatioClasses = 'aspect-9x16'; 
                 }
                 
                 // Set the overlay text based on content type
@@ -331,7 +377,7 @@
                 const itemHtml = `
                     <div class="portfolio-item group relative overflow-hidden rounded-xl shadow-xl border border-gray-800 transition transform hover:scale-[1.02] cursor-pointer" data-index="${index}">
                         <!-- Dynamically set the aspect ratio class based on data -->
-                        <div class="aspect-w-16 ${aspectRatioClass}">
+                        <div class="aspect-w-16 ${aspectRatioClasses}">
                             <!-- Image has prevent-download class to deter saving/dragging -->
                             <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-75 prevent-download" 
                                 onerror="this.onerror=null; this.src='https://placehold.co/600x400/1f2937/FFFFFF?text=Content+Unavailable';">
@@ -370,11 +416,24 @@
                 // Display static image render
                 contentArea.innerHTML = `<img src="${item.image}" alt="${item.title} Render" class="w-full h-auto object-cover rounded-lg prevent-download">`;
             } else if (item.type === 'video' && item.videoUrl) {
-                // Display embedded video (e.g., from YouTube or Vimeo)
-                // We use an iframe to embed the content, which prevents direct download of the video file itself.
+                
+                // --- Dynamic Aspect Ratio Fix ---
+                const [ratioW, ratioH] = item.ratio.split('/').map(Number);
+                // Padding-top is (Height / Width) * 100, which sets the container's height dynamically
+                const paddingPercentage = (ratioH / ratioW) * 100;
+                // --- End Dynamic Aspect Ratio Fix ---
+                
+                let embedUrl = item.videoUrl;
+
+                // Check if the URL needs conversion (e.g., if the user pasted a standard share link)
+                if (embedUrl.includes("youtube.com") || embedUrl.includes("youtu.be")) {
+                    embedUrl = getYouTubeEmbedUrl(embedUrl);
+                }
+
+                // Display embedded video
                 contentArea.innerHTML = `
-                    <div class="relative w-full overflow-hidden" style="padding-top: 56.25%;"> 
-                        <iframe src="${item.videoUrl}" 
+                    <div class="relative w-full overflow-hidden" style="padding-top: ${paddingPercentage}%;"> 
+                        <iframe src="${embedUrl}" 
                             frameborder="0" 
                             allow="autoplay; encrypted-media" 
                             allowfullscreen 
