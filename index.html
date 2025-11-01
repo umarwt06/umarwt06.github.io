@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Glass Showcase - Muhammad Umar</title>
+    <title>Portfolio - Muhammad Umar</title>
     <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <!-- Use Inter font --><style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
@@ -36,6 +36,8 @@
             border: 1px solid var(--color-border);
             border-radius: 1.5rem;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            /* This is crucial for the aspect ratio children */
+            overflow: hidden;
         }
 
         /* Portfolio Item Style */
@@ -81,7 +83,7 @@
             border: 2px solid var(--color-bg);
         }
 
-        /* --- NEW CUSTOM ASPECT RATIO FOR 4:5 --- */
+        /* --- CUSTOM ASPECT RATIO FOR 4:5 --- */
         .aspect-4x5 {
             /* (5 / 4) * 100 = 125% padding-top */
             padding-top: 125%; 
@@ -93,29 +95,36 @@
             overflow: hidden; 
             white-space: nowrap; /* Forces text onto a single line */
             border-right: 0.15em solid var(--color-accent); /* Blinking cursor */
-            /* Adjusted speed for snappier animation: 1.8s steps(30, end) */
             animation: 
                 typing 1.8s steps(30, end),
                 blink-caret 0.75s step-end infinite;
-            /* Ensure the animation starts aligned */
             text-align: left;
         }
 
         .typewriter-text {
-            /* Now, this span just holds the content */
             display: inline;
         }
 
-        /* Typing animation */
         @keyframes typing {
             from { width: 0 }
             to { width: 100% }
         }
 
-        /* Blinking cursor animation */
         @keyframes blink-caret {
             from, to { border-color: transparent }
             50% { border-color: var(--color-accent); }
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #34d399; /* Emerald */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
     <script>
@@ -155,7 +164,6 @@
         <!-- Hero Section --><section id="hero" class="py-24 sm:py-32 text-center fade-in">
             <div class="glass-panel max-w-5xl mx-auto p-8 sm:p-12">
                 <h1 class="text-5xl sm:text-7xl font-extrabold mb-4 leading-tight tracking-tight">
-                    <!-- FIX: Combined both words into the typewriter container -->
                     <div class="typewriter-text-container mx-auto">
                         <span class="typewriter-text">
                             <span class="text-white/90">Visualizing</span> <span class="text-primary-accent">Innovation.</span>
@@ -183,23 +191,38 @@
                 <div class="glass-panel p-8 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center fade-in" style="transition-delay: 0.2s;">
                     
                     <!-- Column 1: 3D Art Tools --><div class="fade-in" style="transition-delay: 0.3s;">
-                        <svg class="w-10 h-10 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11.056l7.5-3.75V15.75l-7.5 3.75-7.5-3.75V7.306l7.5-3.75zM12 11.056v8.444M19.5 7.306L12 11.056m-7.5-3.75l7.5 3.75"></path></svg>
+                        <svg class="w-10 h-10 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11.056l7.5-3.75V15.75l7.5 3.75-7.5-3.75V7.306l7.5-3.75zM12 11.056v8.444M19.5 7.306L12 11.056m-7.5-3.75l7.5 3.75"></path></svg>
                         <p class="font-bold text-lg mb-2 text-primary-accent">3D & Creative Art</p>
-                        <p class="text-white/70">Blender (Cycles/Evee), Marvelous Designer, Photoshop, Unreal Engine.</p>
+                        <p id="skill-3d" class="text-white/70">Blender (Cycles/Evee), Marvelous Designer, Photoshop, Unreal Engine.</p>
                     </div>
 
                     <!-- Column 2: Code & Automation --><div class="fade-in" style="transition-delay: 0.4s;">
                         <svg class="w-10 h-10 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                         <p class="font-bold text-lg mb-2 text-primary-accent">Code & Automation</p>
-                        <p class="text-white/70">Python (Scripting/Tools), HTML/CSS, JavaScript, PHP (Backend Logic).</p>
+                        <p id="skill-code" class="text-white/70">Python (Scripting/Tools), HTML/CSS, JavaScript, PHP (Backend Logic).</p>
                     </div>
 
                     <!-- Column 3: Web & E-commerce --><div class="fade-in" style="transition-delay: 0.5s;">
                         <svg class="w-10 h-10 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         <p class="font-bold text-lg mb-2 text-primary-accent">E-commerce & Web Platforms</p>
-                        <p class="text-white/70">Shopify, Webflow, WordPress, Figma (Design).</p>
+                        <p id="skill-web" class="text-white/70">Shopify, Webflow, WordPress, Figma (Design).</p>
                     </div>
                 </div>
+
+                <div class="flex justify-center mt-12 fade-in" style="transition-delay: 0.6s;">
+                    <button id="analyze-button" onclick="analyzeTechStack()" class="px-6 py-3 bg-white/10 text-white rounded-lg font-bold hover:bg-white/20 transition duration-300 flex items-center shadow-lg">
+                        <span id="analysis-text">Analyze Tech Stack Synergies ✨</span>
+                    </button>
+                </div>
+                
+                <!-- Gemini LLM Output Area for Tech Stack Analysis -->
+                <div id="analysis-output" class="glass-panel p-6 mt-8 max-w-4xl mx-auto hidden">
+                    <p class="font-bold text-lg mb-3 text-primary-accent">Creative Technologist Synergy Analysis</p>
+                    <div id="analysis-content" class="text-sm text-white/70 italic">
+                        The analysis of your diverse skills will appear here.
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -246,9 +269,17 @@
                     </div>
                 </div>
 
-                <p id="modal-description" class="text-white/70 leading-relaxed text-sm">
+                <!-- Description Area -->
+                <p id="modal-description" class="text-white/70 leading-relaxed text-sm mb-4">
                     Detailed description of the project goes here.
                 </p>
+
+                <!-- Gemini Feature 1: Description Drafter Button -->
+                <div class="flex justify-end mb-4">
+                    <button id="draft-description-button" onclick="draftDescription()" class="px-4 py-2 text-xs bg-white/10 text-white rounded-lg hover:bg-white/20 transition duration-300 flex items-center">
+                        <span id="draft-text">Draft Description with AI ✨</span>
+                    </button>
+                </div>
 
                 <!-- Technical Breakdown Section --><div class="bg-dark-panel/70 p-4 rounded-lg mt-6 border border-white/10">
                     <p class="font-bold text-white/90 mb-2 border-b border-white/10 pb-1 text-lg text-primary-accent">Technical Breakdown</p>
@@ -262,6 +293,153 @@
 
 
     <script>
+        // --- Gemini API Configuration ---
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+        const apiKey = ""; // Leave as empty string. Canvas provides the key.
+
+        // --- Utility for Exponential Backoff (API calls) ---
+        async function fetchWithBackoff(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 429 || response.status >= 500) {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        // --- Gemini Feature 1: Draft Project Description ---
+        async function draftDescription() {
+            const draftButton = document.getElementById('draft-description-button');
+            const draftTextSpan = document.getElementById('draft-text');
+            const descriptionElement = document.getElementById('modal-description');
+            const technicalElement = document.getElementById('modal-technical');
+            const titleElement = document.getElementById('modal-title');
+            const categoryElement = document.getElementById('modal-category');
+            const softwareElement = document.getElementById('modal-software');
+
+            // Collect current project details
+            const projectTitle = titleElement.textContent;
+            const projectCategory = categoryElement.textContent;
+            const projectSoftware = softwareElement.textContent;
+            const projectTechDetails = technicalElement.textContent;
+
+            const userPrompt = `Draft a compelling, professional, and concise project description (max 4 sentences) for a portfolio piece. Focus on the creative intent and technical execution.
+            
+            - Title: ${projectTitle}
+            - Category: ${projectCategory}
+            - Software/Stack: ${projectSoftware}
+            - Technical Breakdown: ${projectTechDetails}`;
+
+            // Set loading state
+            draftButton.disabled = true;
+            draftButton.classList.remove('justify-end');
+            draftButton.innerHTML = '<div class="spinner"></div>Generating...';
+
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: {
+                        parts: [{ text: "You are a professional marketing copywriter for a high-end 3D artist and Creative Technologist. Your tone should be polished, technical, and impressive." }]
+                    },
+                    config: {
+                         maxOutputTokens: 200,
+                         temperature: 0.7
+                    }
+                };
+
+                const response = await fetchWithBackoff(API_URL + apiKey, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (generatedText) {
+                    descriptionElement.textContent = generatedText.trim();
+                } else {
+                    descriptionElement.textContent = "Error generating description. Please try again.";
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                descriptionElement.textContent = "Failed to connect to AI service. Check console for details.";
+            } finally {
+                // Restore button state
+                draftButton.disabled = false;
+                draftButton.innerHTML = '<span id="draft-text">Draft Description with AI ✨</span>';
+            }
+        }
+
+        // --- Gemini Feature 2: Analyze Tech Stack Synergies ---
+        async function analyzeTechStack() {
+            const analyzeButton = document.getElementById('analyze-button');
+            const outputArea = document.getElementById('analysis-output');
+            const outputContent = document.getElementById('analysis-content');
+            
+            const skills3D = document.getElementById('skill-3d').textContent;
+            const skillsCode = document.getElementById('skill-code').textContent;
+            const skillsWeb = document.getElementById('skill-web').textContent;
+
+            const userPrompt = `Analyze the following three pillars of a Creative Technologist's skill set. In a single paragraph, describe the unique synergy and value this combination creates for a potential employer (e.g., how Python scripting helps 3D pipelines, or how web skills enhance presentation).
+            
+            1. 3D & Creative Art: ${skills3D}
+            2. Code & Automation: ${skillsCode}
+            3. Web & E-commerce: ${skillsWeb}`;
+            
+            // Set loading state
+            analyzeButton.disabled = true;
+            analyzeButton.innerHTML = '<div class="spinner"></div>Analyzing...';
+            outputArea.classList.remove('hidden');
+            outputContent.innerHTML = 'Analyzing skill synergy...';
+
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: {
+                        parts: [{ text: "You are a senior technical recruiter specializing in interdisciplinary creative roles. Provide a sharp, concise analysis aimed at hiring managers." }]
+                    },
+                    config: {
+                         maxOutputTokens: 250,
+                         temperature: 0.5
+                    }
+                };
+
+                const response = await fetchWithBackoff(API_URL + apiKey, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (generatedText) {
+                    outputContent.textContent = generatedText.trim();
+                } else {
+                    outputContent.textContent = "Error: Could not retrieve analysis.";
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                outputContent.textContent = "Failed to connect to AI service. Check console for details.";
+            } finally {
+                // Restore button state
+                analyzeButton.disabled = false;
+                analyzeButton.innerHTML = '<span id="analysis-text">Analyze Tech Stack Synergies ✨</span>';
+            }
+        }
+        
+        // --- Core Functions (kept for context) ---
+
         /**
          * Converts a standard YouTube URL (watch, youtu.be, shorts) into a robust embed URL.
          */
@@ -354,33 +532,39 @@
 
         /**
          * Renders the portfolio items from the data array into the grid.
-         * Adds 'fade-in' class and staggered delays for animation.
          */
         function renderPortfolio() {
             const grid = document.getElementById('portfolio-grid');
             if (!grid) return;
 
-            grid.innerHTML = ''; // Clear existing items before rendering
+            grid.innerHTML = ''; 
 
             portfolioData.forEach((item, index) => {
-                let aspectRatioClasses = 'aspect-w-16 aspect-h-9'; 
+                let aspectRatioClasses = ''; 
                 
-                // Use the custom 4/5 class for the vertical ratio
                 if (item.ratio === '4/5') {
                     aspectRatioClasses = 'aspect-4x5'; 
                 } 
-                // The original code below is now redundant but kept for flexibility if you change ratios later.
+                else if (item.ratio === '16/9') aspectRatioClasses = 'aspect-w-16 aspect-h-9'; 
                 else if (item.ratio === '1/1') aspectRatioClasses = 'aspect-w-1 aspect-h-1'; 
                 else if (item.ratio === '9/16') aspectRatioClasses = 'aspect-9x16'; 
                 
                 const overlayText = item.type === 'video' ? 'VIEW ANIMATION' : 'VIEW BREAKDOWN';
 
                 const itemHtml = `
-                    <div class="project-card group relative overflow-hidden glass-panel transition transform duration-300 cursor-pointer fade-in" 
+                    <div class="project-card group relative glass-panel transition transform duration-300 cursor-pointer fade-in" 
                          style="--delay: ${index * 0.1}s;" data-index="${index}">
-                        <div class="aspect-w-16 ${aspectRatioClasses} relative">
-                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-60 prevent-download">
-                            <div class="absolute inset-0 bg-dark-panel/90 flex flex-col items-center justify-center p-4 text-center text-white/90 opacity-0 transition duration-500 group-hover:opacity-100">
+                        
+                        <!-- THE FIX IS HERE: -->
+                        <!-- This 'relative' container sets the 4:5 shape using padding -->
+                        <div class="relative w-full ${aspectRatioClasses}"> 
+                            
+                            <!-- This 'img' is now 'absolute' to fill that 4:5 shape -->
+                            <img src="${item.image}" alt="${item.title}" 
+                                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-60 prevent-download">
+                            
+                            <!-- This overlay is also 'absolute' to fill that 4:5 shape -->
+                            <div class="absolute inset-0 bg-dark-panel/90 flex flex-col items-center justify-end p-4 text-center text-white/90 opacity-0 transition duration-500 group-hover:opacity-100">
                                 <p class="text-xl font-extrabold">${item.title}</p>
                                 <p class="text-sm font-semibold mt-1 text-primary-accent">${item.category}</p>
                                 <span class="mt-3 text-xs font-bold px-3 py-1 bg-primary-accent text-dark-bg rounded-full shadow-lg">${overlayText}</span>
@@ -391,11 +575,10 @@
                 grid.innerHTML += itemHtml;
             });
             
-            document.querySelectorAll('.project-card').forEach(card => {
+            document.querySelectorAll('.project-card[data-index]').forEach(card => {
                 card.addEventListener('click', () => openModal(card.getAttribute('data-index')));
             });
 
-            // Re-observe after rendering new elements
             setupIntersectionObserver();
         }
 
@@ -414,7 +597,6 @@
             if (item.type === 'image') {
                 contentArea.innerHTML = `<img src="${item.image}" alt="${item.title} Render" class="w-full h-auto object-cover rounded-lg prevent-download">`;
             } else if (item.type === 'video' && item.videoUrl) {
-                // Since all ratios are now 4/5, we can use 125% padding-top
                 const [ratioW, ratioH] = item.ratio.split('/').map(Number);
                 const paddingPercentage = (ratioH / ratioW) * 100;
                 
@@ -487,6 +669,7 @@
             }, appearOptions);
 
             faders.forEach(fader => {
+                // FIX: Corrected typo 'ffader' to 'fader'
                 appearOnScroll.observe(fader);
             });
         }
@@ -497,10 +680,10 @@
         window.onload = function() {
             renderPortfolio();
             document.getElementById('current-year').textContent = new Date().getFullYear();
-            // Initial animation setup for elements already in viewport
             setupIntersectionObserver(); 
             document.getElementById('hero').classList.add('is-visible'); // Ensure hero animates on load
         };
     </script>
 </body>
 </html>
+
