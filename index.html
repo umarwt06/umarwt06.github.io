@@ -126,6 +126,154 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* --- Custom Video Player Styles --- */
+        .custom-player {
+            position: relative;
+            width: 100%;
+            max-height: 80vh; 
+            overflow: hidden;
+            border-radius: 0.5rem; 
+        }
+        .custom-player video {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        .custom-player:hover .video-controls {
+            opacity: 1;
+        }
+        .video-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        .video-controls button:hover {
+            color: var(--color-accent);
+        }
+        .seek-bar-container {
+            flex-grow: 1;
+            cursor: pointer;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            position: relative;
+        }
+        .seek-bar-progress {
+            height: 100%;
+            width: 0%;
+            background: var(--color-accent);
+            border-radius: 5px;
+            pointer-events: none;
+        }
+        .volume-controls {
+            display: flex;
+            align-items: center;
+        }
+        .volume-slider {
+            width: 70px;
+            margin-left: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255,255,255,0.2);
+            height: 5px;
+            border-radius: 5px;
+            outline: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .video-time {
+            color: white;
+            font-size: 0.75rem;
+            margin-left: 10px;
+        }
+
+        /* --- NEW: Image Slider (Carousel) Styles --- */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 0.5rem; /* Match modal content radius */
+        }
+        .slider-slide {
+            display: none; /* Hidden by default */
+            width: 100%;
+            height: 100%;
+            animation: fadeIn 0.5s ease-in-out; /* Simple fade effect */
+        }
+        .slider-slide.active {
+            display: block; /* Show the active slide */
+        }
+        .slider-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 'contain' is best for portfolio images */
+            border-radius: 0.5rem; /* Match parent */
+            max-height: 75vh; /* Ensure it fits in the modal */
+        }
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .slider-btn:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
+        }
+        .slider-btn-prev {
+            left: 10px;
+        }
+        .slider-btn-next {
+            right: 10px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
+        }
+
     </style>
     <script>
         tailwind.config = {
@@ -286,7 +434,7 @@
                 
                 <!-- Project Content Area: Displays Image or Video Embed -->
                 <div id="modal-content-area" class="w-full h-auto rounded-lg mb-6 border border-white/10 bg-dark-panel/50 overflow-hidden">
-                    <!-- Dynamic content (img or iframe) will be inserted here -->
+                    <!-- Dynamic content (img, iframe, or custom video player) will be inserted here -->
                 </div>
                 
                 <!-- NEW: Two-Column Layout Container -->
@@ -487,24 +635,120 @@
             }
         }
         
-        // --- Core Functions (kept for context) ---
+        // --- Custom Video Player Functions ---
 
-        /**
-         * Converts a standard YouTube URL (watch, youtu.be, shorts) into a robust embed URL.
-         */
-        function getYouTubeEmbedUrl(url) {
-            let videoId = '';
-            const match = url.match(/(?:\?v=|\&v=)([^&]+)|youtu\.be\/([^?&]+)|youtube\.com\/shorts\/([^?&]+)/);
-
-            if (match) {
-                videoId = match[1] || match[2] || match[3];
+        // Toggles Play/Pause state
+        function togglePlayPause(video, playPauseBtn) {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
             }
+        }
 
-            if (videoId && videoId.length === 11) {
-                // Use a reliable embed URL format that works even for Shorts, with looping.
-                return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&controls=1&modestbranding=1&loop=1&playlist=${videoId}`;
+        // Updates the Play/Pause button icon
+        function updatePlayPauseIcon(video, playIcon, pauseIcon) {
+            if (video.paused) {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+            } else {
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
             }
-            return url;
+        }
+
+        // Formats time from seconds to 00:00
+        function formatTime(timeInSeconds) {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = Math.floor(timeInSeconds % 60);
+            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Updates the seek bar and time display
+        function updateVideoProgress(video, seekBar, currentTimeEl, durationTimeEl) {
+            const progress = (video.currentTime / video.duration) * 100;
+            // seekBar.value = progress; // This should be for a range input, but we use a div
+            
+            const progressFill = seekBar; // seekBar is now the progress div
+            if (progressFill) {
+                progressFill.style.width = `${progress}%`;
+            }
+            
+            currentTimeEl.textContent = formatTime(video.currentTime);
+            if (isFinite(video.duration)) {
+                 durationTimeEl.textContent = formatTime(video.duration);
+            }
+        }
+
+        // Allows seeking by clicking the seek bar
+        function setVideoProgress(event, video, seekBarContainer) {
+            const rect = seekBarContainer.getBoundingClientRect();
+            const pos = (event.clientX - rect.left) / rect.width;
+            video.currentTime = pos * video.duration;
+        }
+
+        // Toggles Mute/Unmute state
+        function toggleMute(video, muteIcon, unmuteIcon) {
+            video.muted = !video.muted;
+            if (video.muted) {
+                muteIcon.classList.remove('hidden');
+                unmuteIcon.classList.add('hidden');
+            } else {
+                muteIcon.classList.add('hidden');
+                unmuteIcon.classList.remove('hidden');
+            }
+        }
+
+        // Sets the volume from the slider
+        function setVolume(video, volumeSlider) {
+            video.volume = volumeSlider.value;
+            video.muted = volumeSlider.value === '0';
+        }
+
+        // Enters/Exits fullscreen mode
+        // FIX: Removed this function as it's disallowed by permissions policy
+        // function toggleFullscreen(playerContainer) { ... }
+
+        // Initializes all event listeners for the custom player
+        function initializeCustomPlayer(containerId) {
+            const player = document.getElementById(containerId);
+            if (!player) return;
+
+            const video = player.querySelector('video');
+            const playPauseBtn = player.querySelector('#playPauseBtn');
+            const playIcon = player.querySelector('#playIcon');
+            const pauseIcon = player.querySelector('#pauseIcon');
+            const seekBarContainer = player.querySelector('.seek-bar-container');
+            const seekBar = player.querySelector('.seek-bar-progress'); // This is the fill div
+            const currentTimeEl = player.querySelector('#currentTime');
+            const durationTimeEl = player.querySelector('#durationTime');
+            const muteBtn = player.querySelector('#muteBtn');
+            const muteIcon = player.querySelector('#muteIcon');
+            const unmuteIcon = player.querySelector('#unmuteIcon');
+            const volumeSlider = player.querySelector('#volumeSlider');
+            // FIX: Removed fullscreenBtn reference
+            // const fullscreenBtn = player.querySelector('#fullscreenBtn');
+
+            // Play/Pause
+            playPauseBtn.addEventListener('click', () => togglePlayPause(video, playPauseBtn));
+            video.addEventListener('play', () => updatePlayPauseIcon(video, playIcon, pauseIcon));
+            video.addEventListener('pause', () => updatePlayPauseIcon(video, playIcon, pauseIcon));
+            
+            // Time & Seek Bar
+            video.addEventListener('loadedmetadata', () => updateVideoProgress(video, seekBar, currentTimeEl, durationTimeEl));
+            video.addEventListener('timeupdate', () => updateVideoProgress(video, seekBar, currentTimeEl, durationTimeEl));
+            seekBarContainer.addEventListener('click', (e) => setVideoProgress(e, video, seekBarContainer));
+            
+            // Volume
+            muteBtn.addEventListener('click', () => toggleMute(video, muteIcon, unmuteIcon));
+            volumeSlider.addEventListener('input', () => setVolume(video, volumeSlider));
+            
+            // FIX: Removed fullscreenBtn event listener
+            // fullscreenBtn.addEventListener('click', () => toggleFullscreen(player));
+
+            // Initial state update
+            updatePlayPauseIcon(video, playIcon, pauseIcon);
+            updateVideoProgress(video, seekBar, currentTimeEl, durationTimeEl);
         }
 
         // --- Core Data: Projects across all 3 disciplines ---
@@ -519,7 +763,6 @@
                 image: 'https://github.com/umarwt06/umarwt06.github.io/blob/main/videoframe_5129.png?raw=true', 
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'video',
-                // UPDATED to support direct video links (like Fiverr)
                 videoUrl: 'https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/nnwf87camrum8mwcah5h' 
             },
             {
@@ -528,7 +771,7 @@
                 software: 'Blender, Capcut',
                 description: 'A high-fidelity 3D product render of JBL headphones, created to showcase a clean, modern aesthetic. This project emphasizes detailed hard-surface modeling, precise material definition for brushed metals and plastics, and dramatic studio lighting to capture the products sleek form and branding.',
                 technicalDetails: 'Modeled in Blender using a non-destructive, subdivision-based workflow. Materials are a mix of procedural PBR shaders and image-based textures for fine details like the logo. Lit using a classic three-point lighting setup with an additional rim light to define the silhouette. Rendered in Cycles with high samples and denoising, with final color grading and bloom effects applied in Capcut.',
-                image: 'https://fiverr-res.cloudinary.com/images/t_gallery_medium,q_auto,f_auto/gigs/444177458/original/2686c00d4a557e4a8d96c6d2b33933c3d5134fdb/do-a-detailed-3d-modeling-and-rendering-on-blender.png',
+                image: 'https://i.postimg.cc/qhBN2kjX/download-1.png',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'video',
                 videoUrl: 'https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/q2oyuu3ghfaw1obbueah' 
@@ -541,7 +784,13 @@
                 technicalDetails: 'Modeled, textured, and lit in Blender, rendered in Cycles. Utilized a multi-layered shader graph for the glass, capturing realistic internal reflections and liquid viscosity. The scene is lit by mesh-based studio lights to create soft highlights and deep, atmospheric shadows. Post-processing in Photoshop for final color grading.',
                 image: 'https://github.com/umarwt06/umarwt06.github.io/blob/main/perfume.png?raw=true', 
                 ratio: '4/5', // UNIFIED RATIO
-                type: 'image'
+                type: 'image',
+                // NEW: Added gallery with placeholder images
+                gallery: [
+                    'https://github.com/umarwt06/umarwt06.github.io/blob/main/perfume.png?raw=true',
+                    'https://placehold.co/800x1000/1e293b/e2e8f0?text=Perfume+Detail+Shot',
+                    'https://placehold.co/800x1000/1e293b/e2e8f0?text=Perfume+Wireframe'
+                ]
             },
             {
                 title: 'Sci-Fi Environment',
@@ -552,7 +801,13 @@
                 image: 'https://placehold.co/400x500/8b5cf6/0f172a?text=Sci-Fi+Environment+(4:5)',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'image',
-                videoUrl: '' 
+                videoUrl: '',
+                // NEW: Added gallery with placeholder images
+                gallery: [
+                    'https://placehold.co/800x1000/8b5cf6/0f172a?text=Sci-Fi+Main+Shot',
+                    'https://placehold.co/800x1000/1e293b/e2e8f0?text=Sci-Fi+Detail+Shot',
+                    'https://placehold.co/800x1000/1e293b/e2e8f0?text=Sci-Fi+Asset+Breakdown'
+                ]
             },
             
             // --- Creative Code Projects ---
@@ -565,7 +820,7 @@
                 image: 'https://placehold.co/400x500/60a5fa/0f172a?text=Python+Tool+(4:5)',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'video',
-                videoUrl: 'https://www.youtube.com/embed/yUfuLc_30SI?si=adBBRtsBkvWzOc2P'
+                videoUrl: 'https://www.youtube.com/watch?v=yUfuLc_30SI'
             },
             
             // --- Web / E-commerce Projects ---
@@ -577,7 +832,11 @@
                 technicalDetails: 'Impact: 20% increase in mobile conversion, Lighthouse score 92+. Stack: Webflow CMS for products, custom JavaScript for cart interactions, and Figma for initial UI/UX wireframing.',
                 image: 'https://placehold.co/400x500/fcd34d/0f172a?text=Webflow+E-commerce+(4:5)',
                 ratio: '4/5', // UNIFIED RATIO
-                type: 'image'
+                type: 'image',
+                gallery: [
+                    'https://placehold.co/800x1000/fcd34d/0f172a?text=Webflow+Homepage',
+                    'https://placehold.co/800x1000/1e293b/e2e8f0?text=Webflow+Mobile+View'
+                ]
             },
             {
                 title: 'Full-Stack Landing Page',
@@ -585,7 +844,7 @@
                 software: 'Blender, Photoshop',
                 description: 'A sleek, modern 3D render of a portable power bank, designed for product marketing and e-commerce. The visualization highlights a minimalist aesthetic with a brushed aluminum finish and a high-contrast digital display, emphasizing both style and smart functionality for a premium tech accessory.',
                 technicalDetails: 'Modeled and rendered in Blender (Cycles). The design features clean, hard-surface modeling with precise booleans for the digital display cutout. Materials are procedural, utilizing noise textures to achieve a realistic brushed metal effect. The scene is lit with a soft-box and area lights to create gentle reflections, and the digital display uses an emissive shader for a realistic glow.',
-                image: 'https://fiverr-res.cloudinary.com/images/t_gallery_medium,q_auto,f_auto/gigs/425764968/original/b9823174f2c75ad9525cf02c5c87465e9ca7125d/do-3d-modeling-product-designing-3d-design-and-3d-animation.png',
+                image: 'https://i.postimg.cc/qvxY0Bs1/correct.png',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'image'
             },
@@ -641,7 +900,6 @@
             });
             
             document.querySelectorAll('.project-card[data-index]').forEach(card => {
-                // FIX: Was data-sIndex, changed to data-index
                 card.addEventListener('click', () => openModal(card.getAttribute('data-index'))); 
             });
 
@@ -664,22 +922,70 @@
             const contentArea = document.getElementById('modal-content-area');
             contentArea.innerHTML = ''; 
 
+            // Check if it's an IMAGE project
             if (item.type === 'image') {
-                contentArea.innerHTML = `<img src="${item.image}" alt="${item.title} Render" class="w-full h-auto object-cover rounded-lg prevent-download" onerror="this.onerror=null; this.src='https://placehold.co/400x500/1e293b/e2e8f0?text=Image+Not+Found';">`;
-            } else if (item.type === 'video' && item.videoUrl) {
+                // Check if it has a gallery with multiple images
+                if (item.gallery && item.gallery.length > 1) {
+                    // Build Slider HTML
+                    let slidesHtml = item.gallery.map((imgUrl, index) => {
+                        return `
+                            <div class="slider-slide ${index === 0 ? 'active' : ''}">
+                                <img src="${imgUrl}" alt="${item.title} - Image ${index + 1}" class="prevent-download" 
+                                     onerror="this.onerror=null; this.src='https://placehold.co/400x500/1e293b/e2e8f0?text=Image+Not+Found';">
+                            </div>
+                        `;
+                    }).join('');
+
+                    contentArea.innerHTML = `
+                        <div class="slider-container">
+                            ${slidesHtml}
+                            <button class="slider-btn slider-btn-prev">&larr;</button>
+                            <button class="slider-btn slider-btn-next">&rarr;</button>
+                        </div>
+                    `;
+
+                    // Initialize Slider Logic
+                    const slides = contentArea.querySelectorAll('.slider-slide');
+                    const nextBtn = contentArea.querySelector('.slider-btn-next');
+                    const prevBtn = contentArea.querySelector('.slider-btn-prev');
+                    let currentSlide = 0;
+
+                    function showSlide(index) {
+                        slides.forEach((slide, i) => {
+                            slide.classList.toggle('active', i === index);
+                        });
+                    }
+
+                    nextBtn.addEventListener('click', () => {
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        showSlide(currentSlide);
+                    });
+
+                    prevBtn.addEventListener('click', () => {
+                        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                        showSlide(currentSlide);
+                    });
+
+                } else {
+                    // Fallback to single image
+                    contentArea.innerHTML = `<img src="${item.image}" alt="${item.title} Render" class="w-full h-auto object-contain rounded-lg prevent-download" style="max-height: 75vh;" onerror="this.onerror=null; this.src='https://placehold.co/400x500/1e293b/e2e8f0?text=Image+Not+Found';">`;
+                }
+            } 
+            // Check if it's a VIDEO project
+            else if (item.type === 'video' && item.videoUrl) {
                 
                 let embedHtml = '';
                 
-                // Check if it's a YouTube/Vimeo style URL
-                if (item.videoUrl.includes("youtube.com") || item.videoUrl.includes("youtu.be") || item.videoUrl.length === 11) {
-                    let embedUrl = item.videoUrl;
-                    if (embedUrl.length === 11) { // Handle raw ID
-                         embedUrl = `https://www.youtube.com/watch?v=${embedUrl}`;
-                    }
-                    embedUrl = getYouTubeEmbedUrl(embedUrl);
+                // Check for any YouTube link and extract the ID
+                const ytMatch = item.videoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+
+                if (ytMatch && ytMatch[1]) {
+                    const videoId = ytMatch[1];
+                    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&controls=1&modestbranding=1&loop=1&playlist=${videoId}`;
                     
                     const [ratioW, ratioH] = item.ratio.split('/').map(Number);
-                    const paddingPercentage = (ratioH / ratioW) * 100;
+                    let paddingPercentage = (ratioH / ratioW) * 100;
+                    if (isNaN(paddingPercentage)) paddingPercentage = 56.25; // Default to 16:9 if ratio is bad
                     
                     embedHtml = `
                         <div class="relative w-full overflow-hidden" style="padding-top: ${paddingPercentage}%;"> 
@@ -691,16 +997,42 @@
                                 referrerpolicy="no-referrer"></iframe>
                         </div>`;
                 } 
-                // Handle direct video links (Fiverr, etc.)
+                // Handle direct video links (Fiverr, etc.) with custom player
                 else {
                     embedHtml = `
-                        <video class="w-full h-auto" controls autoplay loop muted playsinline>
-                            <source src="${item.videoUrl}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>`;
+                        <div class="custom-player" id="player-container">
+                            <video class="w-full h-auto" loop muted playsinline preload="metadata">
+                                <source src="${item.videoUrl}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="video-controls">
+                                <button id="playPauseBtn" class="p-2">
+                                    <svg id="playIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8.118v3.764a1 1 0 001.555.832l3.197-1.882a1 1 0 000-1.664l-3.197-1.882z" clip-rule="evenodd" /></svg>
+                                    <svg id="pauseIcon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h1a1 1 0 001-1V8a1 1 0 00-1-1H8zm3 0a1 1 0 00-1 1v4a1 1 0 001 1h1a1 1 0 001-1V8a1 1 0 00-1-1h-1z" clip-rule="evenodd" /></svg>
+                                </button>
+                                <span id="currentTime" class="video-time">00:00</span>
+                                <div class="seek-bar-container">
+                                    <div class="seek-bar-progress"></div>
+                                </div>
+                                <span id="durationTime" class="video-time">00:00</span>
+                                <div class="volume-controls">
+                                    <button id="muteBtn" class="p-2">
+                                        <svg id="unmuteIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 11-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                        <svg id="muteIcon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 15.343a1 1 0 01-1.414 0L12 14.086l-1.243 1.257a1 1 0 01-1.414-1.414L10.586 12 9.343 10.757a1 1 0 011.414-1.414L12 10.586l1.243-1.257a1 1 0 011.414 1.414L13.414 12l1.243 1.257a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0"> <!-- Muted by default -->
+                                </div>
+                                <!-- FIX: Removed fullscreen button -->
+                            </div>
+                        </div>`;
                 }
                 
                 contentArea.innerHTML = embedHtml;
+                
+                // If the custom player was added, initialize its controls
+                if (embedHtml.includes('id="player-container"')) {
+                    initializeCustomPlayer('player-container');
+                }
             }
 
             document.getElementById('modal-title').textContent = item.title;
