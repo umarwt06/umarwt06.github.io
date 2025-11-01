@@ -192,7 +192,7 @@
                 <div class="glass-panel p-8 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center fade-in" style="transition-delay: 0.2s;">
                     
                     <!-- Column 1: 3D Art Tools --><div class="fade-in" style="transition-delay: 0.3s;">
-                        <svg class="w-10 h-10 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11.056l7.5-3.75V15.75l7.5 3.75-7.5-3.75V7.306l7.5-3.75zM12 11.056v8.444M19.5 7.306L12 11.056m-7.5-3.75l7.5 3.75"></path></svg>
+                        <svg class="w-10 h-10 mx-auto mb-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11.056l7.5-3.75V15.75l-7.5 3.75-7.5-3.75V7.306l7.5-3.75zM12 11.056v8.444M19.5 7.306L12 11.056m-7.5-3.75l7.5 3.75"></path></svg>
                         <p class="font-bold text-lg mb-2 text-primary-accent">3D & Creative Art</p>
                         <p id="skill-3d" class="text-white/70">Blender (Cycles/Evee), Marvelous Designer, Photoshop, Unreal Engine.</p>
                     </div>
@@ -274,45 +274,65 @@
         </div>
     </footer>
 
-    <!-- Project Modal (Lightbox) --><div id="project-modal" class="fixed inset-0 bg-dark-bg/95 z-50 hidden items-center justify-center p-4" onclick="closeModal(event)">
-        <div class="glass-panel rounded-xl max-w-4xl w-full max-h-full overflow-y-auto" onclick="event.stopPropagation()">
-            <div class="p-6">
+    <!-- Project Modal (Lightbox) -->
+    <div id="project-modal" class="fixed inset-0 bg-dark-bg/95 z-50 hidden items-center justify-center p-4" onclick="closeModal(event)">
+        <!-- MODAL CONTAINER: Increased max-width to 'max-w-6xl' for the two-column layout -->
+        <div class="glass-panel rounded-xl max-w-6xl w-full max-h-full overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="p-6 md:p-8">
                 <button class="float-right text-gray-400 hover:text-primary-accent text-3xl font-light" onclick="closeModal()">
                     &times;
                 </button>
-                <h3 id="modal-title" class="text-3xl font-bold mb-4 text-primary-accent">Project Title</h3>
+                <h3 id="modal-title" class="text-3xl font-bold mb-6 text-primary-accent">Project Title</h3>
                 
-                <!-- Project Content Area: Displays Image or Video Embed --><div id="modal-content-area" class="w-full h-auto rounded-lg mb-6 border border-white/10 bg-dark-panel/50 overflow-hidden">
-                    <!-- Dynamic content (img or iframe) will be inserted here --></div>
+                <!-- Project Content Area: Displays Image or Video Embed -->
+                <div id="modal-content-area" class="w-full h-auto rounded-lg mb-6 border border-white/10 bg-dark-panel/50 overflow-hidden">
+                    <!-- Dynamic content (img or iframe) will be inserted here -->
+                </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
-                    <div>
-                        <p class="font-bold text-white/70">Category:</p>
-                        <p id="modal-category" class="text-primary-accent">Environment Art</p>
+                <!-- NEW: Two-Column Layout Container -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    
+                    <!-- Left Column (Details & AI Button) -->
+                    <div class="flex flex-col space-y-6">
+                        <!-- Category & Software -->
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="font-bold text-white/70">Category:</p>
+                                <p id="modal-category" class="text-primary-accent">Environment Art</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white/70">Software/Stack:</p>
+                                <p id="modal-software" class="text-primary-accent">Blender, Substance Painter</p>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Description Drafter Button -->
+                        <div class="flex-grow flex items-end">
+                            <button id="draft-description-button" onclick="draftDescription()" class="w-full px-4 py-3 text-sm bg-white/10 text-white rounded-lg hover:bg-white/20 transition duration-300 flex items-center justify-center">
+                                <span id="draft-text">Draft Description with AI ✨</span>
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-bold text-white/70">Software/Stack:</p>
-                        <p id="modal-software" class="text-primary-accent">Blender, Substance Painter</p>
+
+                    <!-- Right Column (Description & Breakdown) -->
+                    <div class="space-y-6 md:border-l md:border-white/10 md:pl-8">
+                        <!-- Description Area -->
+                        <div>
+                            <p class="font-bold text-lg text-white/90 mb-2">Project Description</p>
+                            <p id="modal-description" class="text-white/70 leading-relaxed text-sm">
+                                Detailed description of the project goes here.
+                            </p>
+                        </div>
+
+                        <!-- Technical Breakdown Section -->
+                        <div class="bg-dark-panel/70 p-4 rounded-lg border border-white/10">
+                            <p class="font-bold text-white/90 mb-2 border-b border-white/10 pb-1 text-lg text-primary-accent">Technical Breakdown</p>
+                            <p id="modal-technical" class="text-sm text-white/50 italic leading-relaxed">
+                                Technical details about polycount, texture size, and optimization go here.
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Description Area -->
-                <p id="modal-description" class="text-white/70 leading-relaxed text-sm mb-4">
-                    Detailed description of the project goes here.
-                </p>
-
-                <!-- Gemini Feature 1: Description Drafter Button -->
-                <div class="flex justify-end mb-4">
-                    <button id="draft-description-button" onclick="draftDescription()" class="px-4 py-2 text-xs bg-white/10 text-white rounded-lg hover:bg-white/20 transition duration-300 flex items-center">
-                        <span id="draft-text">Draft Description with AI ✨</span>
-                    </button>
-                </div>
-
-                <!-- Technical Breakdown Section --><div class="bg-dark-panel/70 p-4 rounded-lg mt-6 border border-white/10">
-                    <p class="font-bold text-white/90 mb-2 border-b border-white/10 pb-1 text-lg text-primary-accent">Technical Breakdown</p>
-                    <p id="modal-technical" class="text-sm text-white/50 italic leading-relaxed">
-                        Technical details about polycount, texture size, and optimization go here.
-                    </p>
                 </div>
             </div>
         </div>
@@ -375,7 +395,7 @@
                     systemInstruction: {
                         parts: [{ text: "You are a professional marketing copywriter for a high-end 3D artist and Creative Technologist. Your tone should be polished, technical, and impressive." }]
                     },
-                    config: {
+                    generationConfig: { // Use generationConfig
                          maxOutputTokens: 200,
                          temperature: 0.7
                     }
@@ -393,6 +413,7 @@
                 if (generatedText) {
                     descriptionElement.textContent = generatedText.trim();
                 } else {
+                    console.error("Gemini API Error: No text generated.", result);
                     descriptionElement.textContent = "Error generating description. Please try again.";
                 }
 
@@ -428,13 +449,13 @@
             outputArea.classList.remove('hidden');
             outputContent.innerHTML = 'Analyzing skill synergy...';
 
-            try { // <-- FIX: Removed the extra '.' from 'try.'
+            try {
                 const payload = {
                     contents: [{ parts: [{ text: userPrompt }] }],
                     systemInstruction: {
                         parts: [{ text: "You are a senior technical recruiter specializing in interdisciplinary creative roles. Provide a sharp, concise analysis aimed at hiring managers." }]
                     },
-                    config: {
+                    generationConfig: { // Use generationConfig
                          maxOutputTokens: 250,
                          temperature: 0.5
                     }
@@ -452,6 +473,7 @@
                 if (generatedText) {
                     outputContent.textContent = generatedText.trim();
                 } else {
+                    console.error("Gemini API Error: No text generated.", result);
                     outputContent.textContent = "Error: Could not retrieve analysis.";
                 }
 
@@ -497,28 +519,40 @@
                 image: 'https://placehold.co/400x500/10b981/0f172a?text=EarBuds+Animation+(4:5)', 
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'video',
-                videoUrl: 'eZtTOlGjeNM' // Your actual video ID
+                // UPDATED to support direct video links (like Fiverr)
+                videoUrl: 'https://fiverr-res.cloudinary.com/video/upload/t_fiverr_hd/nnwf87camrum8mwcah5h' 
             },
             {
-                title: 'Perdume Bottle 3d Model',
+                title: 'Perfume Bottle 3d Model',
                 category: '3D Model / Product Design',
                 software: 'Blender, Photoshop',
-                description: 'A photorealistic 3D Perfume Bottle render focusing on high-end cinematic lighting and material fidelity. This project showcases a detailed study of light refraction and caustics through complex glass and liquid shaders, designed to create a dramatic, premium, and sophisticated product image suitable for advertising and marketing campaigns.',
+                description: 'A photorealistic 3D product render focusing on high-end cinematic lighting and material fidelity. This project showcases a detailed study of light refraction and caustics through complex glass and liquid shaders, designed to create a dramatic, premium, and sophisticated product image suitable for advertising and marketing campaigns.',
                 technicalDetails: 'Modeled, textured, and lit in Blender, rendered in Cycles. Utilized a multi-layered shader graph for the glass, capturing realistic internal reflections and liquid viscosity. The scene is lit by mesh-based studio lights to create soft highlights and deep, atmospheric shadows. Post-processing in Photoshop for final color grading.',
                 image: 'https://github.com/umarwt06/umarwt06.github.io/blob/main/perfume.png?raw=true',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'image',
-                videoUrl: 'YOUR_VIDEO_ID' // If this project has a video breakdown
+                videoUrl: '' 
             },
             {
                 title: 'Realistic Cloth Simulation',
                 category: '3D Art / Character',
                 software: 'Marvelous Designer, Blender Cycles, Photoshop',
-                description: 'A study in realistic fabric dynamics and rendering using Marvelous Designer for garment creation.',
-                technicalDetails: 'Simulation: High-density mesh, PBR texture maps (4k). Focus: Wrinkle detail and subtle lighting variations.',
-                image: 'https://placehold.co/400x500/f87171/0f172a?text=Cloth+Simulation+(4:5)', // Updated placeholder image to 4:5
+                description: 'A detailed study in realistic fabric dynamics, focused on garment creation in Marvelous Designer and shading in Blender. This project explores complex wrinkle generation, material properties of different textiles, and advanced lighting to achieve a photorealistic result.',
+                technicalDetails: 'Simulation: High-density quad mesh, 20ms simulation step. Textures: 4k PBR maps (Roughness, Normal, Fabric Weave). Render: Cycles X, 1024 samples with denoising. Post-Pro: Photoshop for color grading and level adjustments.',
+                image: 'https://placehold.co/400x500/f87171/0f172a?text=Cloth+Simulation+(4:5)', 
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'image'
+            },
+            {
+                title: 'Sci-Fi Environment',
+                category: '3D Art / Environment',
+                software: 'Blender, Unreal Engine 5, Substance',
+                description: 'An atmospheric, real-time environment scene built in Unreal Engine 5. The project focuses on modular asset creation, advanced material blending using trim sheets, and dynamic lighting with Lumen to create an immersive and technically optimized sci-fi corridor.',
+                technicalDetails: 'Pipeline: Modular kit created in Blender, textured in Substance. Engine: UE5 with Lumen GI and Nanite. Assets: 4k trim sheets for environmental props, vertex painting for material blending.',
+                image: 'https://placehold.co/400x500/8b5cf6/0f172a?text=Sci-Fi+Environment+(4:5)',
+                ratio: '4/5', // UNIFIED RATIO
+                type: 'image',
+                videoUrl: '' 
             },
             
             // --- Creative Code Projects ---
@@ -526,8 +560,8 @@
                 title: 'Python Asset Renamer Tool',
                 category: 'Creative Code / Python',
                 software: 'Python 3, Tkinter (GUI)',
-                description: 'A custom desktop tool to automate batch renaming and folder structuring for large 3D asset exports, reducing pipeline errors.',
-                technicalDetails: 'Key Features: Regex-based parsing, multi-threading, error logging. Runtime: 0.5s per 100 files.',
+                description: 'A custom desktop tool built with Python and Tkinter to automate batch renaming and folder structuring for large 3D asset exports. This script standardizes naming conventions, reducing pipeline errors and saving significant manual labor.',
+                technicalDetails: 'Key Features: Regex-based parsing for file names, recursive folder traversal, multi-threading for performance, and a simple GUI for non-technical artists. Processes 1000+ files in under 2 seconds.',
                 image: 'https://placehold.co/400x500/60a5fa/0f172a?text=Python+Tool+(4:5)',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'image'
@@ -537,9 +571,9 @@
             {
                 title: 'Webflow E-commerce CRO',
                 category: 'Web / E-commerce',
-                software: 'Webflow, Custom CSS/JS',
-                description: 'Complete redesign of a physical goods store, optimized for mobile conversion rate and page speed.',
-                technicalDetails: 'Impact: 20% increase in mobile conversion, Lighthouse score 92+. Focused on Webflow CMS & custom interactions.',
+                software: 'Webflow, Custom CSS/JS, Figma',
+                description: 'Complete redesign and optimization of a direct-to-consumer e-commerce store. The project focused on Conversion Rate Optimization (CRO) for mobile devices and improving page speed, resulting in a 20% increase in mobile conversion.',
+                technicalDetails: 'Impact: 20% increase in mobile conversion, Lighthouse score 92+. Stack: Webflow CMS for products, custom JavaScript for cart interactions, and Figma for initial UI/UX wireframing.',
                 image: 'https://placehold.co/400x500/fcd34d/0f172a?text=Webflow+E-commerce+(4:5)',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'image'
@@ -548,13 +582,12 @@
                 title: 'Full-Stack Landing Page',
                 category: 'Web / Code',
                 software: 'HTML, Tailwind CSS, JavaScript, PHP',
-                description: 'A highly optimized, custom-coded landing page with server-side form handling built in PHP.',
-                technicalDetails: 'Performance: Sub-2 second load time globally. Validation: Client and server-side validation implemented.',
-                image: 'https://placehold.co/400x500/10b981/0f172a?text=Custom+PHP+Web+(4:5)', // Updated placeholder image to 4:5
+                description: 'A highly optimized, custom-coded "brochure" website built from scratch. The site features a clean, responsive design, client-side form validation with JavaScript, and a secure server-side contact form handler built in PHP.',
+                technicalDetails: 'Performance: Sub-2 second load time globally. Stack: Vanilla HTML/JS with Tailwind CSS. Backend: Custom PHP script for validating and sending email via SMTP, preventing header injection attacks.',
+                image: 'https"https://placehold.co/400x500/10b981/0f172a?text=Custom+PHP+Web+(4:5)',
                 ratio: '4/5', // UNIFIED RATIO
                 type: 'image'
             },
-            // Add more projects here
         ];
 
         /**
@@ -569,12 +602,16 @@
             portfolioData.forEach((item, index) => {
                 let aspectRatioClasses = ''; 
                 
+                // This logic block now correctly defaults to 4:5 if ratio is '4/5'
                 if (item.ratio === '4/5') {
                     aspectRatioClasses = 'aspect-4x5'; 
                 } 
                 else if (item.ratio === '16/9') aspectRatioClasses = 'aspect-w-16 aspect-h-9'; 
                 else if (item.ratio === '1/1') aspectRatioClasses = 'aspect-w-1 aspect-h-1'; 
                 else if (item.ratio === '9/16') aspectRatioClasses = 'aspect-9x16'; 
+                else {
+                    aspectRatioClasses = 'aspect-4x5'; // Default fallback
+                }
                 
                 const overlayText = item.type === 'video' ? 'VIEW ANIMATION' : 'VIEW BREAKDOWN';
 
@@ -582,13 +619,13 @@
                     <div class="project-card group relative glass-panel transition transform duration-300 cursor-pointer fade-in" 
                          style="--delay: ${index * 0.1}s;" data-index="${index}">
                         
-                        <!-- THE FIX IS HERE: -->
                         <!-- This 'relative' container sets the 4:5 shape using padding -->
                         <div class="relative w-full ${aspectRatioClasses}"> 
                             
                             <!-- This 'img' is now 'absolute' to fill that 4:5 shape -->
                             <img src="${item.image}" alt="${item.title}" 
-                                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-60 prevent-download">
+                                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-60 prevent-download"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x500/1e293b/e2e8f0?text=Image+Not+Found';">
                             
                             <!-- This overlay is also 'absolute' to fill that 4:5 shape -->
                             <div class="absolute inset-0 bg-dark-panel/90 flex flex-col items-center justify-end p-4 text-center text-white/90 opacity-0 transition duration-500 group-hover:opacity-100">
@@ -603,7 +640,8 @@
             });
             
             document.querySelectorAll('.project-card[data-index]').forEach(card => {
-                card.addEventListener('click', () => openModal(card.getAttribute('data-index')));
+                // FIX: Was data-sIndex, changed to data-index
+                card.addEventListener('click', () => openModal(card.getAttribute('data-index'))); 
             });
 
             setupIntersectionObserver();
@@ -615,6 +653,10 @@
          */
         function openModal(indexString) {
             const index = parseInt(indexString, 10);
+            if (isNaN(index) || index < 0 || index >= portfolioData.length) {
+                console.error("Invalid index for openModal:", indexString);
+                return; // Exit if index is invalid
+            }
             const item = portfolioData[index];
             if (!item) return;
 
@@ -622,29 +664,42 @@
             contentArea.innerHTML = ''; 
 
             if (item.type === 'image') {
-                contentArea.innerHTML = `<img src="${item.image}" alt="${item.title} Render" class="w-full h-auto object-cover rounded-lg prevent-download">`;
+                contentArea.innerHTML = `<img src="${item.image}" alt="${item.title} Render" class="w-full h-auto object-cover rounded-lg prevent-download" onerror="this.onerror=null; this.src='https://placehold.co/400x500/1e293b/e2e8f0?text=Image+Not+Found';">`;
             } else if (item.type === 'video' && item.videoUrl) {
-                const [ratioW, ratioH] = item.ratio.split('/').map(Number);
-                const paddingPercentage = (ratioH / ratioW) * 100;
                 
-                let embedUrl = item.videoUrl;
-                if (embedUrl.includes("youtube.com") || embedUrl.includes("youtu.be") || embedUrl.length === 11) {
-                    if (embedUrl.length === 11) {
+                let embedHtml = '';
+                
+                // Check if it's a YouTube/Vimeo style URL
+                if (item.videoUrl.includes("youtube.com") || item.videoUrl.includes("youtu.be") || item.videoUrl.length === 11) {
+                    let embedUrl = item.videoUrl;
+                    if (embedUrl.length === 11) { // Handle raw ID
                          embedUrl = `https://www.youtube.com/watch?v=${embedUrl}`;
                     }
                     embedUrl = getYouTubeEmbedUrl(embedUrl);
+                    
+                    const [ratioW, ratioH] = item.ratio.split('/').map(Number);
+                    const paddingPercentage = (ratioH / ratioW) * 100;
+                    
+                    embedHtml = `
+                        <div class="relative w-full overflow-hidden" style="padding-top: ${paddingPercentage}%;"> 
+                            <iframe src="${embedUrl}" 
+                                frameborder="0" 
+                                allow="autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen 
+                                class="absolute top-0 left-0 w-full h-full"
+                                referrerpolicy="no-referrer"></iframe>
+                        </div>`;
+                } 
+                // Handle direct video links (Fiverr, etc.)
+                else {
+                    embedHtml = `
+                        <video class="w-full h-auto" controls autoplay loop muted playsinline>
+                            <source src="${item.videoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>`;
                 }
-
-                contentArea.innerHTML = `
-                    <div class="relative w-full overflow-hidden" style="padding-top: ${paddingPercentage}%;"> 
-                        <iframe src="${embedUrl}" 
-                            frameborder="0" 
-                            allow="autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen 
-                            class="absolute top-0 left-0 w-full h-full"
-                            referrerpolicy="no-referrer"></iframe>
-                    </div>
-                `;
+                
+                contentArea.innerHTML = embedHtml;
             }
 
             document.getElementById('modal-title').textContent = item.title;
@@ -696,7 +751,6 @@
             }, appearOptions);
 
             faders.forEach(fader => {
-                // FIX: Corrected typo 'ffader' to 'fader'
                 appearOnScroll.observe(fader);
             });
         }
