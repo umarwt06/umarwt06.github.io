@@ -155,7 +155,8 @@
                 <a href="#portfolio" class="text-white/80 hover:text-primary-accent transition duration-200">Showcase</a>
                 <a href="#technical-stack" class="text-white/80 hover:text-primary-accent transition duration-200">Tech Stack</a>
                 <a href="#about" class="text-white/80 hover:text-primary-accent transition duration-200">About</a>
-                <a href="mailto:ranaasim9993@gmail.com" class="px-4 py-1 bg-primary-accent text-dark-bg rounded-full hover:bg-emerald-300 transition duration-200 font-semibold shadow-md">Contact</a>
+                <!-- UPDATED: This now links to the #contact section at the bottom -->
+                <a href="#contact" class="px-4 py-1 bg-primary-accent text-dark-bg rounded-full hover:bg-emerald-300 transition duration-200 font-semibold shadow-md">Contact</a>
             </nav>
         </div>
     </header>
@@ -239,6 +240,32 @@
                 </div>
             </div>
         </section>
+
+        <!-- NEW: Contact Section -->
+        <section id="contact" class="py-16 sm:py-24">
+            <div class="container mx-auto px-4 max-w-4xl">
+                <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-white/90 fade-in">Get In Touch</h2>
+                <div class="glass-panel p-8 sm:p-12 text-center fade-in" style="transition-delay: 0.2s;">
+                    <p class="text-xl text-white/70 max-w-xl mx-auto font-light mb-8">
+                        I am currently available for freelance projects and full-time opportunities. Let's build something amazing together.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-6">
+                        <!-- Email Button -->
+                        <a href="mailto:ranaasim9993@gmail.com" 
+                           class="px-8 py-3 bg-primary-accent text-dark-bg text-lg font-bold rounded-xl shadow-2xl shadow-primary-accent/40 hover:bg-emerald-300 transition duration-300 transform hover:scale-105 inline-block">
+                            Email Me Directly
+                        </a>
+                        <!-- LinkedIn Button -->
+                        <a href="https://www.linkedin.com/in/muhammad-umar-695730352" 
+                           target="_blank" 
+                           class="px-8 py-3 bg-white/10 text-white/90 text-lg font-bold rounded-xl backdrop-blur-sm border border-white/20 hover:bg-white/20 transition duration-300 transform hover:scale-105 inline-block">
+                            Connect on LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer --><footer class="bg-dark-panel/50 mt-12 py-6 border-t border-white/10">
@@ -401,7 +428,7 @@
             outputArea.classList.remove('hidden');
             outputContent.innerHTML = 'Analyzing skill synergy...';
 
-            try {
+            try { // <-- FIX: Removed the extra '.' from 'try.'
                 const payload = {
                     contents: [{ parts: [{ text: userPrompt }] }],
                     systemInstruction: {
